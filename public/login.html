@@ -1,0 +1,62 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4 max-w-md">
+        <h1 class="text-3xl font-bold mb-4">Login</h1>
+        <form action="/login" method="POST" class="bg-white p-6 rounded shadow">
+            <div class="mb-4">
+                <label class="block mb-1">Email</label>
+                <input type="email" name="email" required class="w-full border p-2 rounded">
+            </div>
+            <div class="mb-4">
+                <label class="block mb-1">Password</label>
+                <input type="password" name="password" required class="w-full border p-2 rounded">
+            </div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Login</button>
+            <p class="mt-4 text-center">
+              <a href="/" class="text-gray-600 hover:text-red-600 transition duration-200">Register account</a>
+            </p>
+                    </form>
+    </div>
+</body>
+</html>

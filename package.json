@@ -1,0 +1,16 @@
+{
+    "name": "user-role-vuln-app",
+    "version": "1.0.0",
+    "description": "Web app with user role vulnerability",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "cookie-parser": "^1.4.5",
+        "dotenv": "^10.0.0",
+        "express": "^4.17.1",
+        "express-session": "^1.17.2",
+        "nodemailer": "^6.10.1"
+    }
+}
